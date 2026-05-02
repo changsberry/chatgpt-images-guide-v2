@@ -767,7 +767,7 @@ No dialogue, text, or floating elements.`,
       },
       {
         id: '36',
-        title: '36｜小行星星球構圖動起來',
+        title: '36｜小行星地球構圖動起來',
         description: '生成小行星構圖的自拍照，並轉換為動態影片。',
         content: `【核心主體：鎖定人物】
 請務必使用上傳圖片中的同一位女性作為唯一主體。
@@ -914,7 +914,7 @@ face distortion, face change, identity drift, face regeneration, different perso
           '台中地標清晰可辨識能提升在地感',
           '適合社群媒體和個人品牌推廣'
         ],
-        images: ['/images/image 7.png', '/images/image 8.png', '/images/image 9.png']
+        images: ['/images/image 7.png', '/images/image 8.png', '/images/image 9.png', '/images/animation.mp4']
       },
       {
         id: '37',
