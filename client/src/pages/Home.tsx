@@ -1,24 +1,40 @@
-import { useState } from 'react';
-import { ChevronDown, Sparkles, Shield, ShoppingCart, Star } from 'lucide-react';
+import { useState, useRef } from 'react';
+import { ChevronDown, Sparkles, Shield, ShoppingCart, Star, ExternalLink, Copy, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { sections } from '@/data/prompts';
 
 const HERO_BG = 'https://d2xsxph8kpxj0f.cloudfront.net/310519663492543845/hLGa9EfwPvK33FdUVeNSrc/hero-future-tech-TR75KLfGbgT3v2NjxbmFLn.webp';
 const MASCOT = 'https://d2xsxph8kpxj0f.cloudfront.net/310519663492543845/hLGa9EfwPvK33FdUVeNSrc/cute-character-mascot-bnuLYxsmvVAuxVsdZRw7df.png';
-const ICON_SET = 'https://d2xsxph8kpxj0f.cloudfront.net/310519663492543845/hLGa9EfwPvK33FdUVeNSrc/cute-icon-set-h6mstfqSajCd6JAPyNmQsj.webp';
 const DIVIDER = 'https://d2xsxph8kpxj0f.cloudfront.net/310519663492543845/hLGa9EfwPvK33FdUVeNSrc/gradient-divider-3SqA8o4MQPv5bVNfn5Uj7B.png';
 
-const SECTION_ICONS = {
-  '一': <Shield className="w-8 h-8" />,
-  '二': <ShoppingCart className="w-8 h-8" />,
-  '三': <Sparkles className="w-8 h-8" />,
-  '四': <Star className="w-8 h-8" />,
-};
+const SOCIAL_LINKS = [
+  { name: 'Facebook', url: 'https://www.facebook.com/sberry.CYH', icon: '📘' },
+  { name: 'Instagram', url: 'https://www.instagram.com/sberry0111/', icon: '📷' },
+  { name: 'Threads', url: 'https://www.threads.com/@sberrychang?xmt=AQF0zFxzZ80fhsNEI9P6tG6Hmc3Oqn2v2pVYacCGkT2wikU', icon: '🧵' },
+  { name: 'YouTube', url: 'https://www.youtube.com/@sberry.c', icon: '▶️' },
+  { name: 'Substack', url: 'https://substack.com/@berrycweekly?utm_campaign=profile&utm_medium=profile-page', icon: '📧' },
+];
 
 export default function Home() {
   const [expandedSection, setExpandedSection] = useState<string | null>(null);
   const [expandedItem, setExpandedItem] = useState<string | null>(null);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
+  const sectionRefs = useRef<Record<string, HTMLDivElement | null>>({});
+
+  const scrollToSection = (sectionId: string) => {
+    const element = sectionRefs.current[sectionId];
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      setExpandedSection(sectionId);
+    }
+  };
+
+  const copyToClipboard = (text: string, id: string) => {
+    navigator.clipboard.writeText(text);
+    setCopiedId(id);
+    setTimeout(() => setCopiedId(null), 2000);
+  };
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -46,13 +62,17 @@ export default function Home() {
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4">
-              <button className="glow-button text-lg">
+              <button 
+                onClick={() => scrollToSection('section-1')}
+                className="glow-button text-lg"
+              >
                 開始探索 →
               </button>
               <Button
                 variant="outline"
                 size="lg"
                 className="neon-border text-lg"
+                onClick={() => scrollToSection('section-1')}
               >
                 查看完整指南
               </Button>
@@ -102,6 +122,47 @@ export default function Home() {
         />
       </div>
 
+      {/* 個人介紹區塊 */}
+      <section className="py-16 bg-gradient-to-r from-primary/10 via-accent/10 to-primary/10 border-y border-primary/20">
+        <div className="container mx-auto px-4">
+          <div className="glass-card neon-border p-8 max-w-3xl mx-auto">
+            <div className="flex flex-col sm:flex-row gap-6 items-start sm:items-center">
+              <div className="flex-shrink-0">
+                <div className="text-6xl">🍓</div>
+              </div>
+              <div className="flex-1">
+                <h2 className="text-3xl font-display font-bold mb-3 gradient-text">
+                  嗨！我是草莓姊姊
+                </h2>
+                <p className="text-lg text-muted-foreground mb-4">
+                  也是「莓好生活」的創作者。我建立這個公開指南的初衷，是想把 <span className="font-semibold text-primary">ChatGPT Images 2.0</span> 的完整應用心得毫不保留地分享給大家。我將它拆解成四大分類，每個子頁面都有詳細的進階玩法，還有我反覆測試過、可以直接複製使用的指令（Prompt）。
+                </p>
+                <p className="text-muted-foreground mb-6">
+                  這裡是我持續更新的靈感庫，歡迎各位朋友直接取用！如果你覺得這些整理對你有幫助，也歡迎追蹤我，一起在 AI 創作的路上探險。
+                </p>
+                
+                {/* 社群連結 */}
+                <div className="flex flex-wrap gap-3">
+                  {SOCIAL_LINKS.map((link) => (
+                    <a
+                      key={link.name}
+                      href={link.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-card neon-border hover:shadow-lg transition-all duration-300"
+                    >
+                      <span className="text-lg">{link.icon}</span>
+                      <span className="text-sm font-semibold">{link.name}</span>
+                      <ExternalLink className="w-4 h-4 opacity-60" />
+                    </a>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* 主題導覽 */}
       <section className="py-20 bg-gradient-to-b from-background to-card/30">
         <div className="container mx-auto px-4">
@@ -116,14 +177,10 @@ export default function Home() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {sections.map((section) => (
-              <div
+              <button
                 key={section.id}
-                className="glass-card neon-border p-6 hover:shadow-2xl transition-all duration-300 cursor-pointer group"
-                onClick={() =>
-                  setExpandedSection(
-                    expandedSection === section.id ? null : section.id
-                  )
-                }
+                onClick={() => scrollToSection(section.id)}
+                className="glass-card neon-border p-6 hover:shadow-2xl transition-all duration-300 cursor-pointer group text-left"
               >
                 <div className="flex items-start justify-between mb-4">
                   <div className="text-4xl">{section.emoji}</div>
@@ -137,10 +194,10 @@ export default function Home() {
                 <p className="text-sm text-muted-foreground mb-4">
                   {section.description}
                 </p>
-                <div className="text-xs text-accent font-semibold">
+                <div className="text-xs text-accent font-semibold group-hover:translate-x-1 transition-transform">
                   {section.items.length} 個提示詞 →
                 </div>
-              </div>
+              </button>
             ))}
           </div>
         </div>
@@ -150,7 +207,13 @@ export default function Home() {
       <section className="py-20 bg-background">
         <div className="container mx-auto px-4">
           {sections.map((section) => (
-            <div key={section.id} className="mb-12">
+            <div
+              key={section.id}
+              ref={(el) => {
+                if (el) sectionRefs.current[section.id] = el;
+              }}
+              className="mb-12 scroll-mt-20"
+            >
               <button
                 onClick={() =>
                   setExpandedSection(
@@ -160,7 +223,7 @@ export default function Home() {
                 className="w-full glass-card neon-border p-6 text-left hover:shadow-xl transition-all duration-300 mb-6"
               >
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-4 flex-1">
                     <span className="text-4xl">{section.emoji}</span>
                     <div>
                       <h2 className="text-2xl font-display font-bold">
@@ -172,7 +235,7 @@ export default function Home() {
                     </div>
                   </div>
                   <ChevronDown
-                    className={`w-6 h-6 text-primary transition-transform duration-300 ${
+                    className={`w-6 h-6 text-primary transition-transform duration-300 flex-shrink-0 ${
                       expandedSection === section.id ? 'rotate-180' : ''
                     }`}
                   />
@@ -192,7 +255,7 @@ export default function Home() {
                         className="w-full text-left hover:opacity-80 transition-opacity"
                       >
                         <div className="flex items-start justify-between mb-2">
-                          <h3 className="text-lg font-semibold text-primary">
+                          <h3 className="text-lg font-semibold text-primary flex-1">
                             {item.title}
                           </h3>
                           <ChevronDown
@@ -208,12 +271,25 @@ export default function Home() {
 
                       {expandedItem === item.id && (
                         <div className="mt-4 pt-4 border-t border-border/30 space-y-4">
-                          <div className="prose prose-invert max-w-none text-sm">
-                            <pre className="bg-black/50 p-4 rounded-lg overflow-x-auto text-xs text-accent whitespace-pre-wrap break-words">
+                          {/* 提示詞內容 */}
+                          <div className="relative">
+                            <pre className="bg-black/50 p-4 rounded-lg overflow-x-auto text-xs text-accent whitespace-pre-wrap break-words max-h-96 overflow-y-auto">
                               {item.content}
                             </pre>
+                            <button
+                              onClick={() => copyToClipboard(item.content, item.id)}
+                              className="absolute top-2 right-2 p-2 bg-primary/20 hover:bg-primary/40 rounded-lg transition-colors"
+                              title="複製提示詞"
+                            >
+                              {copiedId === item.id ? (
+                                <Check className="w-5 h-5 text-green-400" />
+                              ) : (
+                                <Copy className="w-5 h-5 text-accent" />
+                              )}
+                            </button>
                           </div>
 
+                          {/* 提示 */}
                           {item.tips && item.tips.length > 0 && (
                             <div className="bg-primary/10 border border-primary/30 rounded-lg p-4">
                               <p className="font-semibold text-primary mb-2">
@@ -227,6 +303,7 @@ export default function Home() {
                             </div>
                           )}
 
+                          {/* 參考圖片 */}
                           {item.images && item.images.length > 0 && (
                             <div className="space-y-3">
                               <p className="font-semibold text-accent">
@@ -234,15 +311,23 @@ export default function Home() {
                               </p>
                               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                 {item.images.map((img, idx) => (
-                                  <img
+                                  <div
                                     key={idx}
-                                    src={img}
-                                    alt={`${item.title} 參考圖 ${idx + 1}`}
-                                    className="rounded-lg w-full h-auto object-cover border border-border/30"
-                                    onError={(e) => {
-                                      e.currentTarget.style.display = 'none';
-                                    }}
-                                  />
+                                    className="relative group overflow-hidden rounded-lg border border-border/30"
+                                  >
+                                    <img
+                                      src={img}
+                                      alt={`${item.title} 參考圖 ${idx + 1}`}
+                                      className="w-full h-auto object-cover hover:scale-105 transition-transform duration-300"
+                                      onError={(e) => {
+                                        const container = e.currentTarget.parentElement;
+                                        if (container) {
+                                          container.innerHTML =
+                                            '<div class="w-full h-48 bg-muted/30 flex items-center justify-center text-muted-foreground text-sm">圖片載入中或暫無法顯示</div>';
+                                        }
+                                      }}
+                                    />
+                                  </div>
                                 ))}
                               </div>
                             </div>
@@ -309,7 +394,10 @@ export default function Home() {
           <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
             立即探索 37+ 完整提示詞，掌握 AI 生圖的所有秘訣
           </p>
-          <button className="glow-button text-lg">
+          <button 
+            onClick={() => scrollToSection('section-1')}
+            className="glow-button text-lg"
+          >
             開始使用 →
           </button>
         </div>
@@ -324,32 +412,69 @@ export default function Home() {
                 ChatGPT 圖片生成指南
               </h3>
               <p className="text-muted-foreground text-sm">
-                完整的 AI 生圖提示詞系統，從防護到創意無限
+                完整的 AI 生圖提示詞系統，由草莓姊姊精心整理
               </p>
             </div>
             <div>
               <h4 className="font-semibold mb-4">主題</h4>
               <ul className="space-y-2 text-sm text-muted-foreground">
-                <li>防護系統</li>
-                <li>電商實戰</li>
-                <li>進階策略</li>
-                <li>個人應用</li>
+                <li>
+                  <button 
+                    onClick={() => scrollToSection('section-1')}
+                    className="hover:text-primary transition-colors"
+                  >
+                    防護系統
+                  </button>
+                </li>
+                <li>
+                  <button 
+                    onClick={() => scrollToSection('section-2')}
+                    className="hover:text-primary transition-colors"
+                  >
+                    電商實戰
+                  </button>
+                </li>
+                <li>
+                  <button 
+                    onClick={() => scrollToSection('section-3')}
+                    className="hover:text-primary transition-colors"
+                  >
+                    進階策略
+                  </button>
+                </li>
+                <li>
+                  <button 
+                    onClick={() => scrollToSection('section-4')}
+                    className="hover:text-primary transition-colors"
+                  >
+                    個人應用
+                  </button>
+                </li>
               </ul>
             </div>
             <div>
-              <h4 className="font-semibold mb-4">快速連結</h4>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li>完整指南</li>
-                <li>提示詞庫</li>
-                <li>最佳實踐</li>
-                <li>常見問題</li>
+              <h4 className="font-semibold mb-4">追蹤草莓姊姊</h4>
+              <ul className="space-y-2 text-sm">
+                {SOCIAL_LINKS.map((link) => (
+                  <li key={link.name}>
+                    <a
+                      href={link.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-muted-foreground hover:text-primary transition-colors flex items-center gap-2"
+                    >
+                      <span>{link.icon}</span>
+                      {link.name}
+                    </a>
+                  </li>
+                ))}
               </ul>
             </div>
           </div>
 
           <div className="border-t border-border/30 pt-8 text-center text-sm text-muted-foreground">
             <p>
-              © 2026 ChatGPT 圖片生成完整指南 | 科技未來感 × 可愛風衝突美學
+              © 2026 ChatGPT 圖片生成完整指南 | 由草莓姊姊（莓好生活）精心整理
             </p>
           </div>
         </div>
